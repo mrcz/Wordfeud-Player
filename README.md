@@ -17,7 +17,10 @@ is needed. One is included here, it is the one that wordfeud
 originally used for games in Swedish. It is called ["Den stora svenska
 ordlistan"](http://www.dsso.se) and is made by Göran Andersson. It has
 been slightly modified by the wordfeud author and was previously
-downloadable from [here](http://wordfeud.com/dictionaries/).
+downloadable from [here](http://wordfeud.com/dictionaries/). It is
+licensed under the [Creative Commons Attribution-Share
+Alike](http://creativecommons.org/licenses/by-sa/3.0/) license. The
+rest of the project is licensed under GPL version 2.
 
 A wordlist must be in UTF-8 encoding (no BOM) and contain one word per line.
 
