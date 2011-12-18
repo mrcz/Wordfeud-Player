@@ -77,7 +77,7 @@ class Wordlist(object):
         try:
             for ch in word:
                 node = node.children[ch]
-                if (self.variants and variant) == 0:
+                if (node.variants and variant) == 0:
                     return False
             return node.word
         except:
