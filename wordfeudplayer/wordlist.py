@@ -82,7 +82,7 @@ class Wordlist(object):
             return False
 
     def __repr__(self):
-        return '<Worldlist: %d words from "%s">' % (self.word_count, self.filename)
+        return '<Worldlist: %d words from "%s">' % (self.word_count, ', '.join(self.wordfiles))
 
 
 class Node(object):
