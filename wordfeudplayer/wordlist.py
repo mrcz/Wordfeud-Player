@@ -22,7 +22,8 @@ class Wordlist(object):
         '''Reads a wordlist from a file that contains one word per line in utf-8 format
         :param wordfile The name of the file to read from'''
         if wordfile in self.wordfiles:
-            raise Exception('%s already loaded' % wordfile)
+            log.info('%s already loaded', wordfile)
+            return
         variant = 1 << len(self.wordfiles)
         with open(wordfile) as f:
             for line in f.xreadlines():
