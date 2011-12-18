@@ -3,12 +3,9 @@
 # (c) 2011, Marcus Svensson <macke77@gmail.com>
 # See gpl-2.0.txt for license
 
-import re
-import time
 import logging
-import logging.config
 
-log = logging.getLogger('wordsolver')
+log = logging.getLogger('wordlist')
 
 
 class Wordlist(object):
