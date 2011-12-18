@@ -77,14 +77,14 @@ class Wordlist(object):
         try:
             for ch in word:
                 node = node.children[ch]
-                if (node.variants and variant) == 0:
+                if (node.variants & variant) == 0:
                     return False
             return node.word
         except:
             return False
 
     def __repr__(self):
-        return '<Worldlist: %d words from "%s">' % (self.word_count, ', '.join(self.wordfiles))
+        return '<Worldlist: %d words from "%s">' % (self.word_count, '", "'.join(self.wordfiles))
 
 
 class Node(object):
