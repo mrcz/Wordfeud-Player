@@ -72,11 +72,13 @@ class Wordlist(object):
         m = list(self.root.matches(word+' ', [(self.all_chars, True)]*(len(word)+1), 0, '*', variant))
         return set(match[i].lower() for match in m)
 
-    def is_word(self, word):
+    def is_word(self, word, variant=1):
         node = self.root
         try:
             for ch in word:
                 node = node.children[ch]
+                if (self.variants and variant) == 0:
+                    return False
             return node.word
         except:
             return False
