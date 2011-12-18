@@ -3,9 +3,6 @@
 # (c) 2011, Marcus Svensson <macke77@gmail.com>
 # See gpl-2.0.txt for license
 
-import re
-import time
-
 
 _default_quarter_board = ['3l -- -- -- 3w -- -- 2l',
                           '-- 2l -- -- -- 3l -- --',
