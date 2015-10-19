@@ -132,6 +132,7 @@ class Board(object):
         word_multiplicator = 1
         word_points = 0
         tiles_used = 0
+        total_points = 0
         (x, y) = (x0, y0)
         (dx, dy) = (1,0) if horizontal else (0,1)
         for i, ch in enumerate(word):
@@ -143,35 +144,24 @@ class Board(object):
                     letter_points *= int(square_bonus[0])
                 elif square_bonus[1] == 'w':
                     word_multiplicator *= int(square_bonus[0])
+
+                if include_crossing_words:
+                    crow, ci = (self.vertical[x], y) if horizontal else (self.horizontal[y], x)
+                    s, e = self.start_end(crow, ci)
+                    if e-s > 1:
+                        (cx, cy) = (x, s) if horizontal else (s, y)
+                        cword = crow[s:e].replace(' ', ch)
+                        total_points += self.calc_word_points(cword, cx, cy, not horizontal, False)
+
             word_points += letter_points
             x += dx
             y += dy
 
-        total_points = word_points * word_multiplicator
+        total_points += word_points * word_multiplicator
+
         if tiles_used >= 7:
             total_points += 40
 
-        if include_crossing_words:
-            (rows, i, j0) = (self.vertical, y0, x0) if horizontal else (self.horizontal, x0, y0)
-            for index, ch in enumerate(word):
-                x = x0 + dx*index
-                y = y0 + dy*index
-                j = j0 + index
-                if self.horizontal[y][x] != ' ':
-                    continue
-                row = rows[j]
-                start, end = self.start_end(row, i)
-                if end-start == 1:
-                    continue
-                crossing_points = sum(_letter_points.get(cch, 0) for cch in row[start:end])
-                square_bonus = self.board[y][x]
-                ch_points = _letter_points.get(ch, 0)
-                if square_bonus[1] == 'l':
-                    ch_points *= int(square_bonus[0])
-                crossing_points += ch_points
-                if square_bonus[1] == 'w':
-                    crossing_points *= int(square_bonus[0])
-                total_points += crossing_points
         return total_points
 
     def calc_all_word_scores(self, letters, wordlist, variant=1):
