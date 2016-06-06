@@ -99,8 +99,7 @@ class Node(object):
             if row[pos] != ' ':
                 child = self.children.get(row[pos].lower())
                 if child:
-                    for y in child.matches(row, rowdata, pos+1, letters, variant, word+row[pos], True, extending):
-                        yield y
+                    yield from child.matches(row, rowdata, pos+1, letters, variant, word+row[pos], True, extending)
             else:
                 if self.word and connecting and extending and len(word) > 1:
                     yield word
@@ -115,11 +114,8 @@ class Node(object):
                             # wildcard
                             next_letters = letters[:i] + letters[i+1:]
                             for wc, child in self.children.items():
-                                if not wc in valid_chars:
-                                    continue
-                                for y in child.matches(row, rowdata, pos+1, next_letters, variant, word+wc.upper(), connecting or connected, True):
-                                    yield y
+                                if wc in valid_chars:
+                                    yield from child.matches(row, rowdata, pos+1, next_letters, variant, word+wc.upper(), connecting or connected, True)
                         child = self.children.get(ch)
                         if child:
-                            for y in child.matches(row, rowdata, pos+1, letters[:i] + letters[i+1:], variant, word+ch, connecting or connected, True):
-                                yield y
+                            yield from child.matches(row, rowdata, pos+1, letters[:i] + letters[i+1:], variant, word+ch, connecting or connected, True)
