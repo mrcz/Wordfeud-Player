@@ -13,33 +13,33 @@ _default_quarter_board = ['3l -- -- -- 3w -- -- 2l',
                           '-- -- 2l -- 2l -- -- --',
                           '2l -- -- 2w -- -- -- ss']
 
-_letter_points = {u'a': 1,
-                  u'b': 3,
-                  u'c': 8,
-                  u'd': 1,
-                  u'e': 1,
-                  u'f': 3,
-                  u'g': 2,
-                  u'h': 3,
-                  u'i': 1,
-                  u'j': 7,
-                  u'k': 3,
-                  u'l': 2,
-                  u'm': 3,
-                  u'n': 1,
-                  u'o': 2,
-                  u'p': 4,
-                  u'r': 1,
-                  u's': 1,
-                  u't': 1,
-                  u'u': 4,
-                  u'v': 3,
-                  u'x': 8,
-                  u'y': 7,
-                  u'z': 8,
-                  u'å': 4,
-                  u'ä': 4,
-                  u'ö': 4}
+_letter_points = {'a': 1,
+                  'b': 3,
+                  'c': 8,
+                  'd': 1,
+                  'e': 1,
+                  'f': 3,
+                  'g': 2,
+                  'h': 3,
+                  'i': 1,
+                  'j': 7,
+                  'k': 3,
+                  'l': 2,
+                  'm': 3,
+                  'n': 1,
+                  'o': 2,
+                  'p': 4,
+                  'r': 1,
+                  's': 1,
+                  't': 1,
+                  'u': 4,
+                  'v': 3,
+                  'x': 8,
+                  'y': 7,
+                  'z': 8,
+                  'å': 4,
+                  'ä': 4,
+                  'ö': 4}
 
 
 class Board(object):
@@ -82,11 +82,11 @@ class Board(object):
         '''Sets the current state of the board, ie which letter is on what position
         :param rows a list of strings - one for each row'''
         self.horizontal = rows[:]
-        self.vertical = [u''.join(r) for r in zip(*rows)]
+        self.vertical = [''.join(r) for r in zip(*rows)]
 
     def is_occupied(self, x, y):
         try:
-            return self.vertical[x][y] != u' '
+            return self.vertical[x][y] != ' '
         except:
             return False
 
@@ -169,27 +169,22 @@ class Board(object):
         where each element is on the form (x, y, horizontal, word, score)
         :param letters The letters that can be used to form a word, * for wildcard
         :param wordlist The wordlist of legal words as a wordsolver.wordlist.Wordlist object'''
-        words = []
         for (i, row) in enumerate(self.horizontal):
             sw = list(self.surrounding_words(True, i))
             chars = [wordlist.get_legal_characters(surrounding, variant) for surrounding in sw]
-            connected = [surrounding != u' ' for surrounding in sw]
+            connected = [surrounding != ' ' for surrounding in sw]
             if i == 7:
                 connected[7] = True
-            words += [(x, i, True, word, self.calc_word_points(word, x, i, True)) for
-                      (x, word) in wordlist.words(row, zip(chars, connected), letters, variant)]
+            yield from ((x, i, True, word, self.calc_word_points(word, x, i, True)) for
+                        (x, word) in wordlist.words(row, list(zip(chars, connected)), letters, variant))
         for (i, row) in enumerate(self.vertical):
             sw = list(self.surrounding_words(False, i))
             chars = [wordlist.get_legal_characters(surrounding, variant) for surrounding in sw]
-            connected = [surrounding != u' ' for surrounding in sw]
+            connected = [surrounding != ' ' for surrounding in sw]
             if i == 7:
                 connected[7] = True
-            words += [(i, y, False, word, self.calc_word_points(word, i, y, False)) for
-                      (y, word) in wordlist.words(row, zip(chars, connected), letters, variant)]
-        return words
-
-    def __unicode__(self):
-        return u'\n'.join(row.replace(u' ', u'·') for row in self.horizontal)
+            yield from ((i, y, False, word, self.calc_word_points(word, i, y, False)) for
+                        (y, word) in wordlist.words(row, list(zip(chars, connected)), letters, variant))
 
     def __repr__(self):
-        return unicode(self).encode('utf-8')
+        return '\n'.join(row.replace(' ', '·') for row in self.horizontal)

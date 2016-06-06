@@ -26,8 +26,8 @@ class Wordlist(object):
             return
         variant = 1 << len(self.wordfiles)
         with open(wordfile) as f:
-            for line in f.xreadlines():
-                word = line.decode('utf-8').lower().strip()
+            for line in f:
+                word = line.lower().strip()
                 if word[0] == '#':
                     log.debug('Wordlist comment: %s', word[1:])
                     continue
@@ -52,18 +52,7 @@ class Wordlist(object):
         for pos in range(len(row)-1):
             if pos > 0 and row[pos-1] != ' ':
                 continue
-            for word in self.root.matches(row, rowdata, pos, letters, variant):
-                yield (pos, word)
-
-    def matches(self, row, rowdata, letters):
-        row = ' '+row+' '
-        for length in range(1, len(row)):
-            len_row = row[-length:]
-            if rx_all_spaces.match(len_row) or row[-length-1] != ' ':
-                continue
-            log.debug(u'%d: "%s"' % (length, len_row))
-            for word in self.root.matches(len_row, rowdata, 0, letters):
-                yield word
+            yield from ((pos, word) for word in self.root.matches(row, rowdata, pos, letters, variant))
 
     def get_legal_characters(self, word, variant):
         if word == ' ':
@@ -107,7 +96,7 @@ class Node(object):
 
     def matches(self, row, rowdata, pos, letters, variant, word='', connecting=False, extending=False):
         if pos < len(row) and (variant & self.variants) != 0:
-            if row[pos] != u' ':
+            if row[pos] != ' ':
                 child = self.children.get(row[pos].lower())
                 if child:
                     for y in child.matches(row, rowdata, pos+1, letters, variant, word+row[pos], True, extending):
@@ -118,14 +107,14 @@ class Node(object):
                 if pos < len(row)-1:
                     valid_chars, connected = rowdata[pos]
                     for i, ch in enumerate(letters):
-                        if not ch in valid_chars and ch != u'*':
+                        if not ch in valid_chars and ch != '*':
                             continue
                         if letters.find(ch, 0, i) != -1:
                             continue
-                        if ch == u'*':
+                        if ch == '*':
                             # wildcard
                             next_letters = letters[:i] + letters[i+1:]
-                            for wc, child in self.children.iteritems():
+                            for wc, child in self.children.items():
                                 if not wc in valid_chars:
                                     continue
                                 for y in child.matches(row, rowdata, pos+1, next_letters, variant, word+wc.upper(), connecting or connected, True):
